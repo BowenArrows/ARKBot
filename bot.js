@@ -22,7 +22,7 @@ function hasRole(mem, role) {
     }
 }
 
-function getUsers(name, msg, callback) {
+/*function getUsers(name, msg, callback) {
     rcon.send("listplayers").then((res) => {
         if(res.indexOf(name) > -1){
             var nindex = res.indexOf(name);
@@ -40,7 +40,7 @@ function getUsers(name, msg, callback) {
             return
         }
     })
-}
+}*/
 
 Bot.on('ready', () => {
     console.log('The Bot is dank.');
