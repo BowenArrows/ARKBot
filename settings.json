@@ -1,0 +1,23 @@
+{
+  "config": {
+    "token": "MjcwOTYzMzI0Mjc4MDEzOTcz.C1_iAQ.erg87GoqChbTVVwnqdSmzPDnhXc",
+    "prefix": "!",
+    "ip": "localhost",
+    "port": 32330,
+    "password": "Pass",
+    "ownerRole": "Founder",
+    "adminrole": "Admin",
+    "modRole": "Mod",
+    "arkchatchannel": "general",
+    "serverchatname": "SERVER" 
+  },
+  "items": {
+    "Item": "Name",
+    "tekhelm": "Blueprint'/Game/PrimalEarth/CoreBlueprints/Items/Armor/TEK/PrimalItemArmor_TekHelmet.PrimalItemArmor_TekHelmet'"
+  },
+  "users": {
+    "Bowenarrows": "767680309",
+    "Dad": "759952995"
+    }
+  
+}
