@@ -9,7 +9,6 @@ rcon.connect();
 function commandIs(str, msg){
     return msg.content.toLowerCase().startsWith(setting.config.prefix + str);
 }
-
 function pluck(array) {
     return array.map(function(item) { return item["name"]; });
 }
@@ -21,7 +20,7 @@ function hasRole(mem, role) {
         return false;
     }
 }
-
+//Geting player ID is not possible through rcon at the moment, it always returns the same number.
 /*function getUsers(name, msg, callback) {
     rcon.send("listplayers").then((res) => {
         if(res.indexOf(name) > -1){
@@ -47,7 +46,6 @@ Bot.on('ready', () => {
 });
 //Commands
 Bot.on('message', message => {
-    rcon.connect();
     var args = message.content.split(/[ ]+/);
     if(commandIs('hello', message)){
         message.channel.sendMessage('Hello there ' + message.author.username)
@@ -88,18 +86,39 @@ Bot.on('message', message => {
             message.channel.sendMessage(res)
         })
     }
-    if(commandIs('arkgiveitems', message)){
+    //Doesn't work
+    if(commandIs('arkexp', message)){
+        if(args.length === 3){
+            rcon.send('giveexptoplayer ' + setting.users[args[1]] + " " + args[2] + " 1 0").then((res) => {
+            console.log(res)
+            console.log('giveexptoplayer ' + setting.users[args[1]] + " " + args[2] + " 1 0")
+            })
+        }else if(args.length === 4){
+            rcon.send('giveexptoplayer ' + setting.users[args[1]] + " " + args[2] + " " + args[3] + " 0")
+        }else if(args.length === 5){
+            rcon.send('giveexptoplayer ' + setting.users[args[1]] + " " + args[2] + " " + args[3] + " " + args[4])
+        }else if(args.length > 5){
+            message.channel.sendMessage('Too many ArgumentsUsage: !arkexp [player] [amount] [tribe share(optional)] [Prevent Sharing(optional)]')
+        }else if(args.length < 3){
+            message.channel.sendMessage('Not Enough Arguments Usage: !arkexp [player] [amount] [tribe share(optional)] [Prevent Sharing(optional)]')
+        }
+    }
+
+    //does not work if you would like to mess with this and try to make it work. and are successful I would apreciate it if you sent me the working code - will crash server if run.
+    /*if(commandIs('arkgiveitems', message)){
         if(hasRole(message.member, setting.config.ownerRole)){
             if(args.length === 6){
+                //Using No function
                 pid = setting.users[args[1]]
                 rcon.send("GiveItemToPlayer " + pid + ' "' + setting.items[args[2]] + '" ' + args[3] + ' ' + args[4] + " " + args[5]).then((res) => {
                     message.channel.sendMessage(res)
                 })
-                /*getUsers(args[1], message, function(response){
+                //Using Function
+                getUsers(args[1], message, function(response){
                     rcon.send("GiveItemToPlayer " + response + ' "' + setting.items[args[2]] + '" ' + args[3] + ' ' + args[4] + " " + args[5]).then((res) => {
                     console.log(res)
                     })
-                })*/
+                })
             }else if(args.length <= 5){
                 message.channel.sendMessage('Not enough arguments, Usage, !arkgiveitems [player] [item] [quantity] [quality] [is bluprint?]')
             }else{
@@ -108,7 +127,7 @@ Bot.on('message', message => {
         }else{
             message.channel.sendMessage("You do not have permission to use this command")
         }
-    }
+    }*/
 });
 
 Bot.on('message', message => {
