@@ -33,7 +33,7 @@ function hasRole(mem, role) {
                 playerid = res.split(/[ ]+/)
                 return callback(playerid[3]);
             });
-                
+
         } else {
             msg.channel.sendMessage("No Player with that name is online")
             return
@@ -56,7 +56,7 @@ Bot.on('message', message => {
                 message.channel.sendMessage('You did not enter enough arguments Usage: !say [thing to say]')
             } else {
                 message.channel.sendMessage(args.join(" ").substring(5))
-            } 
+            }
         } else {
             message.channel.sendMessage('You do not have permission to use that command')
         }
@@ -69,7 +69,7 @@ Bot.on('message', message => {
                 rcon.send('Broadcast ' + args.join(" ").substring(9)).then((res) => {
                     console.log(res)
                 })
-            } 
+            }
         }else{
             message.channel.sendMessage('You do not have permission to use that command')
         }
@@ -86,8 +86,13 @@ Bot.on('message', message => {
             message.channel.sendMessage(res)
         })
     }
+      if(commandIs('arkmotd', message)){
+        rcon.send('SetMessageOfTheDay ' + args.join(" ").substring(9)).then((res) => {
+            console.log(res)
+        })
+    }
     //Doesn't work
-    if(commandIs('arkexp', message)){
+    /*if(commandIs('arkexp', message)){
         if(args.length === 3){
             rcon.send('giveexptoplayer ' + setting.users[args[1]] + " " + args[2] + " 1 0").then((res) => {
             console.log(res)
@@ -102,10 +107,9 @@ Bot.on('message', message => {
         }else if(args.length < 3){
             message.channel.sendMessage('Not Enough Arguments Usage: !arkexp [player] [amount] [tribe share(optional)] [Prevent Sharing(optional)]')
         }
-    }
-
+    }*/
     //does not work if you would like to mess with this and try to make it work. and are successful I would apreciate it if you sent me the working code - will crash server if run.
-    /*if(commandIs('arkgiveitems', message)){
+    if(commandIs('arkgiveitems', message)){
         if(hasRole(message.member, setting.config.ownerRole)){
             if(args.length === 6){
                 //Using No function
@@ -114,11 +118,11 @@ Bot.on('message', message => {
                     message.channel.sendMessage(res)
                 })
                 //Using Function
-                getUsers(args[1], message, function(response){
+                /*getUsers(args[1], message, function(response){
                     rcon.send("GiveItemToPlayer " + response + ' "' + setting.items[args[2]] + '" ' + args[3] + ' ' + args[4] + " " + args[5]).then((res) => {
                     console.log(res)
                     })
-                })
+                })*/
             }else if(args.length <= 5){
                 message.channel.sendMessage('Not enough arguments, Usage, !arkgiveitems [player] [item] [quantity] [quality] [is bluprint?]')
             }else{
@@ -127,7 +131,7 @@ Bot.on('message', message => {
         }else{
             message.channel.sendMessage("You do not have permission to use this command")
         }
-    }*/
+    }
 });
 
 Bot.on('message', message => {
