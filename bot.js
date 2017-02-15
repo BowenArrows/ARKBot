@@ -2,6 +2,7 @@ const Discord = require('discord.js');
 const setting = require('./settings.json');
 const Rcon = require('modern-rcon');
 const Bot = new Discord.Client();
+const fs = require('fs');
 const rcon = new Rcon(setting.config.ip, port = setting.config.port, setting.config.password, timeout = 10000);
 
 rcon.connect();
@@ -47,11 +48,17 @@ Bot.on('ready', () => {
 //Commands
 Bot.on('message', message => {
     var args = message.content.split(/[ ]+/);
-    if(commandIs('hello', message)){
-        message.channel.sendMessage('Hello there ' + message.author.username)
+    if(commandIs('help', message)){
+        if(hasRole(message.member, setting.config.ownerRole)){
+            message.channel.sendMessage('The available commands for ' + setting.config.ownerRole + ' are: \n   help \n   say <Message to say>\n   arkcmd <Text to send to ark rcon server>\n   arkbcast <Message to broadcast to ARK>\n   arkplayers \n   arkmotd <Message motd gets set to\n   config <Config to change> <What to change it to>')
+        } else if(hasRole(message.member, setting.config.adminRole)){
+            message.channel.sendMessage('The available commands for ' + setting.config.adminRole + ' are: \n   help \n   say <Message to say>\n   arkbcast <Message to broadcast to ARK>\n   arkplayers \n   arkmotd <Message motd gets set to>')
+        } else {
+            message.channel.sendMessage('The available commands for Everyone are: \n   help \n   arkplayers')
+        }
     }
     if(commandIs('say', message)){
-        if(hasRole(message.member, setting.config.ownerRole) || hasRole(message.member, "Mod")){
+        if(hasRole(message.member, setting.config.ownerRole) || hasRole(message.member, setting.config.adminRole)){
             if(args.length === 1){
                 message.channel.sendMessage('You did not enter enough arguments Usage: !say [thing to say]')
             } else {
@@ -62,7 +69,7 @@ Bot.on('message', message => {
         }
     }
     if(commandIs('arkbcast', message)){
-        if(hasRole(message.member, setting.config.ownerRole) || hasrole(message.member, setting.config.modRole)){
+        if(hasRole(message.member, setting.config.ownerRole) || hasrole(message.member, setting.config.adminRole)){
             if(args.length === 1){
                 message.channel.sendMessage('You did not enter enough arguments Usage: !bcast [thing to broadcast]')
             } else {
@@ -87,9 +94,11 @@ Bot.on('message', message => {
         })
     }
       if(commandIs('arkmotd', message)){
-        rcon.send('SetMessageOfTheDay ' + args.join(" ").substring(9)).then((res) => {
-            console.log(res)
-        })
+          if(hasRole(message.member, setting.config.ownerRole) || hasRole(message.member, setting.config.adminRole)){
+            rcon.send('SetMessageOfTheDay ' + args.join(" ").substring(9)).then((res) => {
+                console.log(res)
+            })
+          }
     }
     //Doesn't work
     /*if(commandIs('arkexp', message)){
@@ -109,7 +118,7 @@ Bot.on('message', message => {
         }
     }*/
     //does not work if you would like to mess with this and try to make it work. and are successful I would apreciate it if you sent me the working code - will crash server if run.
-    if(commandIs('arkgiveitems', message)){
+    /*if(commandIs('arkgiveitems', message)){
         if(hasRole(message.member, setting.config.ownerRole)){
             if(args.length === 6){
                 //Using No function
@@ -122,7 +131,7 @@ Bot.on('message', message => {
                     rcon.send("GiveItemToPlayer " + response + ' "' + setting.items[args[2]] + '" ' + args[3] + ' ' + args[4] + " " + args[5]).then((res) => {
                     console.log(res)
                     })
-                })*/
+                })
             }else if(args.length <= 5){
                 message.channel.sendMessage('Not enough arguments, Usage, !arkgiveitems [player] [item] [quantity] [quality] [is bluprint?]')
             }else{
@@ -131,9 +140,8 @@ Bot.on('message', message => {
         }else{
             message.channel.sendMessage("You do not have permission to use this command")
         }
-    }
+    }*/
 });
-
 Bot.on('message', message => {
     if(message.content.startsWith(setting.config.prefix) || message.author.bot)return;
     else if (message.channel.name === setting.config.arkchatchannel){
@@ -157,6 +165,38 @@ Bot.on('message', message => {
       }, 5000); // time between each interval in milliseconds
     }
 });
+
+Bot.on('message', message => {
+    var args = message.content.split(/[ ]+/);
+    if (hasRole(message.member, setting.config.ownerRole)) {
+        if(commandIs('config', message)){
+            if(args.length === 3){
+                fs.readFile('settings.json', 'utf8', function readFileCallback(err, data){
+                    if (err){
+                        console.log(err);
+                    } else {
+                        obj = JSON.parse(data); //now it's an object
+                        if(obj.config[args[1]] != undefined || args[1] != "port" || args[1] != "token"){
+                            obj.config[args[1]] = args[2].toString() //add some data
+                            json = JSON.stringify(obj); //convert it back to json
+                            fs.writeFile('settings.json', json, 'utf8'); // write it back 
+                        }else if(args[1] === "port"){
+                            obj.config[args[1]] = parseInt(args[2]) //add some data
+                            json = JSON.stringify(obj); //convert it back to json
+                            fs.writeFile('settings.json', json, 'utf8'); // write it back 
+                        } else {
+                            message.channel.sendMessage('That is not a config you can change')
+                        }
+                    }});
+            } else if(args[1] === "list"){
+                message.channel.sendMessage("The available configs are:\nprefix \nip \nport \npassword \nownerRole \nadminRole \narkchatchannel \nserverchatname \n   Caps do matter")
+            } else {
+                message.channel.sendMessage('that is not the proper syntax for that command, Usage: !config <Config to change> <New value>')
+            }
+        }
+    }
+})
+
 process.on('uncaughtException', function (err) {
   console.error(err);
   console.log("Node NOT Exiting...");
