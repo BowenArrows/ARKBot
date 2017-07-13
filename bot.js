@@ -50,11 +50,12 @@ Bot.on('message', message => {
     var args = message.content.split(/[ ]+/);
     if(commandIs('help', message)){
         if(hasRole(message.member, setting.config.ownerRole)){
-            message.channel.sendMessage('The available commands for ' + setting.config.ownerRole + ' are: \n   help \n   say <Message to say>\n   arkcmd <Text to send to ark rcon server>\n   arkbcast <Message to broadcast to ARK>\n   arkplayers \n   arkmotd <Message motd gets set to\n   config <Config to change> <What to change it to>')
+            message.author.createDM()
+            message.author.send('The available commands for ' + setting.config.ownerRole + ' are: \n   help \n   say <Message to say>\n   arkcmd <Text to send to ark rcon server>\n   arkbcast <Message to broadcast to ARK>\n   arkplayers \n   arkmotd <Message motd gets set to\n   config <Config to change> <What to change it to>')
         } else if(hasRole(message.member, setting.config.adminRole)){
-            message.channel.sendMessage('The available commands for ' + setting.config.adminRole + ' are: \n   help \n   say <Message to say>\n   arkbcast <Message to broadcast to ARK>\n   arkplayers \n   arkmotd <Message motd gets set to>')
+            message.channel.send('The available commands for ' + setting.config.adminRole + ' are: \n   help \n   say <Message to say>\n   arkbcast <Message to broadcast to ARK>\n   arkplayers \n   arkmotd <Message motd gets set to>')
         } else {
-            message.channel.sendMessage('The available commands for Everyone are: \n   help \n   arkplayers')
+            message.channel.send('The available commands for Everyone are: \n   help \n   arkplayers')
         }
     }
     if(commandIs('say', message)){
